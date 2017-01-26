@@ -1914,8 +1914,11 @@ abstract class EEM_Base extends EE_Base
         //to get around this, we first do a SELECT, get all the IDs, and then run another query
         //to delete them
         $items_for_deletion = $this->_get_all_wpdb_results($query_params);
-        $deletion_where = $this->_setup_ids_for_delete($items_for_deletion, $allow_blocking);
-        if ($deletion_where) {
+        // $objects_for_deletion = $this->get_all($query_params);
+        // $deletion_where = $this->get_primary_key_field()->get_qualified_column()." IN (".implode(",",array_keys($objects_for_deletion)).")";
+        // if ($objects_for_deletion) {
+        $deletion_where = $this->_setup_ids_for_delete( $items_for_deletion, $allow_blocking);
+        if( $deletion_where){
             //echo "objects for deletion:";var_dump($objects_for_deletion);
             $model_query_info = $this->_create_model_query_info_carrier($query_params);
             $table_aliases = array_keys($this->_tables);

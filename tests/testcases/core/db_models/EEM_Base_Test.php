@@ -120,6 +120,32 @@ class EEM_Base_Test extends EE_UnitTestCase
 
 
     /**
+     * Verifies deletes still work properly, even when deleting a model object whose data is shared between two tables
+     * @group current
+     */
+    public function test_delete__across_multiple_tables(){
+        $e = $this->new_model_obj_with_dependencies('Event');
+        $e2_shouldnt_be_harmed = $this->new_model_obj_with_dependencies('Event');
+        global $wpdb;
+        $post_table_entries = $wpdb->get_var('SELECT COUNT(*) FROM ' . EEM_Event::instance()->table() );
+        $event_meta_table_entries = $wpdb->get_var('SELECT COUNT(*) FROM ' . EEM_Event::instance()->second_table());
+        //make sure when we delete this event, both the record from the posts table and te event meta table get deleted
+        $success = $e->delete_permanently();
+        $this->assertEquals(1, $success);
+        $this->assertEquals(
+            $post_table_entries - 1,
+            $wpdb->get_var('SELECT COUNT(*) FROM ' . EEM_Event::instance()->table() )
+        );
+        $this->assertEquals(
+            $event_meta_table_entries - 1,
+            $wpdb->get_var('SELECT COUNT(*) FROM ' . EEM_Event::instance()->second_table() )
+        );
+
+    }
+
+
+
+    /**
      * @throws EE_Error
      */
     public function test_distanced_HABTM_join()
