@@ -131,7 +131,8 @@ class EEM_Base_Test extends EE_UnitTestCase
         $event_meta_table_entries = $wpdb->get_var('SELECT COUNT(*) FROM ' . EEM_Event::instance()->second_table());
         //make sure when we delete this event, both the record from the posts table and te event meta table get deleted
         $success = $e->delete_permanently();
-        $this->assertEquals(1, $success);
+        //MySQL should actually report TWO rows deleted here- one from posts and one from esp_event_meta
+        $this->assertEquals(2, $success);
         $this->assertEquals(
             $post_table_entries - 1,
             $wpdb->get_var('SELECT COUNT(*) FROM ' . EEM_Event::instance()->table() )
